@@ -54,3 +54,7 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'google-api-client', '~> 0.11', require: 'google/apis/analyticsreporting_v4'
+
+gem 'nexmo'
+# used to load the Nexmo credentials from the .env file
+gem 'dotenv-rails', groups: [:development, :test]

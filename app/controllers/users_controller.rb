@@ -15,13 +15,29 @@ class UsersController < ApplicationController
 
   # POST /users
   def create
-    @user = User.new(user_params)
-    if @user.save
-      render json: { message: 'success', success: true }, status: :created
+    client = Nexmo::Client.new(
+      api_key: "6e1ea2fc",
+      api_secret: "1BIyowRXerM5FfpV"
+    )
+
+    result = client.verify.request(
+      number: '18064968476',
+      brand: "Kittens and Co",
+      code_length: '6'
+    )
+
+    if result.status == '0'
+      @user = User.new(user_params)
+      if @user.save
+        render json: { message: 'success', success: true, request_id: result['request_id'] }, status: :created
+      else
+        render json: { errors: @user.errors.full_messages },
+               status: :unprocessable_entity
+      end
     else
-      render json: { errors: @user.errors.full_messages },
-             status: :unprocessable_entity
+      render json: { message: result.error_text, success: false }, status: :unprocessable_entity      
     end
+
   end
 
   # PUT /users/{username}
@@ -50,7 +66,7 @@ class UsersController < ApplicationController
 
   def user_params
     params.permit(
-      :avatar, :name, :username, :email, :password, :password_confirmation
+      :avatar, :name, :username, :email, :password, :password_confirmation, :phone_number
     )
   end
 end
