@@ -8,9 +8,9 @@ class UsersController < ApplicationController
 
     @users = User.all
     if @permission == 'user'
-      @users = User.find_by_id(@current_user.id)    
-    end 
-    
+      @users = User.find_by_id(@current_user.id)
+    end
+
     render json: @users, status: :ok
   end
 
@@ -21,10 +21,10 @@ class UsersController < ApplicationController
     if @permission != 'admin' && params[:_username] != @current_user.username
       render json: { message: 'You dont have permission' },
               status: :unprocessable_entity
-    else 
-      render json: @user, status: :ok  
+    else
+      render json: @user, status: :ok
     end
-    
+
   end
 
   # POST /users
@@ -49,7 +49,7 @@ class UsersController < ApplicationController
                status: :unprocessable_entity
       end
     else
-      render json: { message: result.error_text, success: false }, status: :unprocessable_entity      
+      render json: { message: result.error_text, success: false }, status: :unprocessable_entity
     end
 
   end
@@ -57,6 +57,7 @@ class UsersController < ApplicationController
   # PUT /users/{username}
   def update
     @permission = @current_user.permission
+
     if @permission != 'admin' && params[:_username] != @current_user.username
       render json: { message: 'You dont have permission' },
               status: :unprocessable_entity
@@ -67,19 +68,19 @@ class UsersController < ApplicationController
       else
         render json: { errors: @user.errors.full_messages },
              status: :unprocessable_entity
-      end  
-    end    
+      end
+    end
 
   end
 
   # DELETE /users/{username}
   def destroy
     @permission = @current_user.permission
-    
-    if @permission !='admin' && params[:_username] != @current_user.username      
+
+    if @permission !='admin' && params[:_username] != @current_user.username
       render json: { message: 'You dont have permission' },
               status: :unprocessable_entity
-    else 
+    else
       @user.destroy
     end
   end
