@@ -30,8 +30,8 @@ class UsersController < ApplicationController
   # POST /users
   def create
     client = Nexmo::Client.new(
-      api_key: "6e1ea2fc",
-      api_secret: "1BIyowRXerM5FfpV"
+      api_key: ENV["NEXMO_API_KEY"],
+      api_secret: ENV["NEXMO_API_SECRET"]
     )
 
     result = client.verify.request(
