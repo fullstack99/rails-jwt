@@ -4,13 +4,27 @@ class UsersController < ApplicationController
 
   # GET /users
   def index
+    @permission = @current_user.permission
+
     @users = User.all
+    if @permission == 'user'
+      @users = User.find_by_id(@current_user.id)    
+    end 
+    
     render json: @users, status: :ok
   end
 
   # GET /users/{username}
   def show
-    render json: @user, status: :ok
+    @permission = @current_user.permission
+
+    if @permission != 'admin' && params[:_username] != @current_user.username
+      render json: { message: 'You dont have permission' },
+              status: :unprocessable_entity
+    else 
+      render json: @user, status: :ok  
+    end
+    
   end
 
   # POST /users
@@ -42,18 +56,32 @@ class UsersController < ApplicationController
 
   # PUT /users/{username}
   def update
-    if @user.update(user_params)
+    @permission = @current_user.permission
+    if @permission != 'admin' && params[:_username] != @current_user.username
+      render json: { message: 'You dont have permission' },
+              status: :unprocessable_entity
+    else
+
+      if @user.update(user_params)
         render json: { message: 'success', success: true }, status: :ok
       else
         render json: { errors: @user.errors.full_messages },
              status: :unprocessable_entity
-      end
+      end  
+    end    
 
   end
 
   # DELETE /users/{username}
   def destroy
-    @user.destroy
+    @permission = @current_user.permission
+    
+    if @permission !='admin' && params[:_username] != @current_user.username      
+      render json: { message: 'You dont have permission' },
+              status: :unprocessable_entity
+    else 
+      @user.destroy
+    end
   end
 
   private
